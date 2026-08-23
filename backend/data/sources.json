@@ -1,0 +1,85 @@
+{
+  "_notice": "DEMO SOURCE DATA - local curated dataset for the hackathon MVP. Not live internet data.",
+  "documents": [
+    {
+      "id": "src-001",
+      "title": "OpenAI ships GPT-5.2 with real-time multimodal agents",
+      "source_name": "The Circuit",
+      "published_at": "2026-08-21",
+      "tags": ["llms", "openai", "agents"],
+      "content": "OpenAI released GPT-5.2 this week, focusing on long-horizon agentic tasks that run for hours without human intervention. The model can orchestrate tool calls across browsers, code sandboxes, and spreadsheets. Early benchmarks show a 34% improvement on autonomous workflow completion. Enterprises are piloting it for back-office automation."
+    },
+    {
+      "id": "src-002",
+      "title": "Anthropic's Claude Opus 4.6 leads coding leaderboards with self-review loops",
+      "source_name": "DevWire Daily",
+      "published_at": "2026-08-20",
+      "tags": ["llms", "anthropic", "coding", "agents"],
+      "content": "Claude Opus 4.6 now tops SWE-bench Verified with a self-review loop that writes tests before shipping patches. Anthropic says the model catches 41% more regressions than its predecessor. Startups report cutting code review turnaround from days to under an hour. The API also gained structured diff outputs for CI integration."
+    },
+    {
+      "id": "src-003",
+      "title": "EU AI Act enforcement phase two begins: transparency rules hit general-purpose AI",
+      "source_name": "PolicyStack",
+      "published_at": "2026-08-19",
+      "tags": ["regulation", "eu", "governance", "llms"],
+      "content": "The second enforcement wave of the EU AI Act took effect, requiring general-purpose AI providers to publish training-data summaries and systemic-risk assessments. Fines can reach 3% of global revenue. Compliance teams are racing to inventory model provenance. US-based providers serving EU users must comply regardless of where they operate."
+    },
+    {
+      "id": "src-004",
+      "title": "Nvidia's Blackwell Ultra GPUs sell out as sovereign AI factories expand",
+      "source_name": "SiliconPulse",
+      "published_at": "2026-08-22",
+      "tags": ["hardware", "nvidia", "infrastructure"],
+      "content": "Nvidia's Blackwell Ultra lineup is sold out through Q1 2027 as governments build sovereign AI datacenters. Japan, Germany, and Saudi Arabia each committed to multi-gigawatt AI factory deployments. Analysts estimate $210B in sovereign AI capex over 18 months. Supply remains the industry's primary constraint."
+    },
+    {
+      "id": "src-005",
+      "title": "RAG is eating fine-tuning budgets as retrieval quality becomes the moat",
+      "source_name": "Vector Weekly",
+      "published_at": "2026-08-18",
+      "tags": ["rag", "retrieval", "llms", "architecture"],
+      "content": "A new industry survey shows 78% of production LLM teams prefer retrieval-augmented generation over fine-tuning for knowledge freshness. Hybrid dense-plus-keyword retrieval with rerankers delivers the best grounding scores per dollar. Vendors are shipping citation-grounding APIs that verify every generated claim against retrieved chunks. Hallucination rates drop up to 60% when retrieval context is enforced."
+    },
+    {
+      "id": "src-006",
+      "title": "AI-generated content floods social platforms; platforms respond with provenance labels",
+      "content": "Major social networks rolled out C2PA provenance labels for synthetic media after a wave of viral AI-generated news clips. Engagement analytics show labeled posts see 22% lower share rates but higher trust scores among informed users. Marketing teams now disclose AI assistance to protect brand credibility. Authenticity is becoming a measurable brand asset.",
+      "source_name": "SocialSignal",
+      "published_at": "2026-08-20",
+      "tags": ["social media", "content", "provenance", "marketing"]
+    },
+    {
+      "id": "src-007",
+      "title": "Autonomous marketing agents move from demos to daily production use",
+      "content": "Agentic marketing tools that draft, schedule, and publish social content autonomously crossed into mainstream adoption. Teams using agent pipelines report 3x posting consistency and 45% faster trend response. The winning pattern pairs real-time trend retrieval with strict human approval gates. Fully unattended publishing still trails due to brand-safety concerns.",
+      "source_name": "GrowthEngineer",
+      "published_at": "2026-08-21",
+      "tags": ["agents", "marketing", "social media", "automation", "content"]
+    },
+    {
+      "id": "src-008",
+      "title": "Small language models on-device: phones run 8B-parameter assistants offline",
+      "content": "Flagship smartphones now ship NPUs capable of running 8B-parameter language models fully offline. Distillation techniques cut memory footprints below 4GB with minimal quality loss. Privacy-first assistants process voice and text locally, syncing only summaries. Developers gain new on-device inference APIs for private-by-default apps.",
+      "source_name": "MobileMatrix",
+      "published_at": "2026-08-17",
+      "tags": ["hardware", "small models", "mobile", "privacy"]
+    },
+    {
+      "id": "src-009",
+      "title": "Developer productivity study: AI pair programmers save 9 hours per week",
+      "content": "A longitudinal study of 12,000 developers found AI pair-programming saves an average of 9 hours weekly, but gains concentrate in boilerplate and test writing. Complex architectural work shows no measurable speedup yet. Teams pairing AI output with mandatory review ship 30% fewer production incidents. The productivity debate is shifting from adoption to verification.",
+      "source_name": "DevMetrics Quarterly",
+      "published_at": "2026-08-16",
+      "tags": ["coding", "productivity", "developer tools", "llms"]
+    },
+    {
+      "id": "src-010",
+      "title": "Content automation platforms race to add trend-retrieval engines",
+      "content": "Content automation vendors are embedding live trend-retrieval modules that scan news and social signals before generating posts. Grounded-generation features that attach citations to every claim are becoming table stakes. Platforms without verifiable sourcing report churn twice as high. The market is consolidating around RAG-first architectures.",
+      "source_name": "MarTech Radar",
+      "published_at": "2026-08-19",
+      "tags": ["rag", "content", "automation", "marketing", "trends"]
+    }
+  ]
+}

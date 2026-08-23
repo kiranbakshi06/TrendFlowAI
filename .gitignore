@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+backend/.env
+backend/data/state.json
+frontend/node_modules/
+frontend/dist/
+vite.log
+backend.log
