@@ -55,7 +55,12 @@ export default function ContentPanel({ content, onGenerate, busy }) {
             <ul className="space-y-1.5">
               {content.sources_used?.map((s, i) => (
                 <li key={s.id} className="flex items-center justify-between gap-2 rounded-md border border-slate-800 bg-slate-900/40 px-3 py-1.5 text-xs">
-                  <span className="truncate text-slate-300"><span className="mr-1.5 font-mono text-cyan-400">[{i + 1}]</span>{s.title} — {s.source_name}</span>
+                  <span className="truncate text-slate-300">
+                    <span className="mr-1.5 font-mono text-cyan-400">[{i + 1}]</span>
+                    {s.url ? <a href={s.url} target="_blank" rel="noreferrer" className="hover:text-cyan-300 hover:underline">{s.title}</a> : s.title}
+                    {' — '}{s.source_name}
+                    {s.origin === 'live' && <span className="ml-1.5 badge border-emerald-700/60 bg-emerald-900/30 text-emerald-300">LIVE</span>}
+                  </span>
                   <span className="shrink-0 font-mono text-slate-500">{g?.per_source?.[i]?.explicit_citation ? 'cited' : `${g?.per_source?.[i]?.keyword_overlap_pct ?? 0}% overlap`}</span>
                 </li>
               ))}

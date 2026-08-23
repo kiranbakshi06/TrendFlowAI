@@ -46,10 +46,18 @@ TrendFlowAI/
 
 ## RAG Workflow
 
-1. **Dataset:** `backend/data/sources.json` contains 10 curated, realistic AI/tech items. **This is clearly-labeled demo source data — not live internet data.**
-2. **Indexing:** at startup each document is tokenized into a TF-IDF vector (with IDF weighting).
-3. **Retrieval:** selecting a trend builds a query from the trend topic; cosine similarity (+ exact tag-match boost) ranks all documents; top-k are returned with relevance percentages.
+1. **Live source, NewsAPI (primary):** if `NEWSAPI_KEY` is set in `backend/.env`, the backend fetches technology top-headlines (`newsapi.org/v2/top-headlines`, cached <=10 min) and optionally GNews top-headlines (`GNEWS_API_KEY`). Articles are normalized into the retriever's document format (title, content/description, source name, URL, publication date, auto-tags) and merged into the same TF-IDF index. Live data goes through the identical RAG + grounding pipeline, never around it.
+2. **Fallback dataset:** `backend/data/sources.json` (10 curated items) is always kept. With no key configured or if any API call fails, the dashboard clearly shows **DEMO SOURCE DATA** (plus a "fallback active" badge when a configured API was unavailable) and the demo continues unaffected.
+3. **Indexing & retrieval:** cosine-similarity TF-IDF (+ tag boosts) ranks the merged corpus; each source carries an origin chip (**LIVE**, with clickable URL / **DEMO**) shown in both RAG Sources and Sources Used so judges can see exactly where information came from.
 4. **Grounding:** retrieved source content is injected verbatim into the LLM prompt with numbered citations `[1]..[n]`. The generated post must cite sources inline.
+
+### Data-source indicator
+
+The header badge shows **LIVE API DATA (provider)** or **DEMO SOURCE DATA** based on actual retrieval status. We never claim data is live when the API is unavailable.
+
+### Key handling
+
+`NEWSAPI_KEY` / `GNEWS_API_KEY` live only in `backend/.env`, are read exclusively server-side, sent only to the provider host over HTTPS, and are never returned to the frontend or written to logs/errors (sanitized messages only).
 
 ### Grounding indicator (honest)
 
@@ -97,8 +105,10 @@ npm run dev                   # http://localhost:5173  (proxies /api → :8000)
 | `OPENAI_API_KEY` | no | *(empty)* | Empty ⇒ offline extractive composer |
 | `OPENAI_BASE_URL` | no | `https://api.openai.com/v1` | Any OpenAI-compatible endpoint |
 | `OPENAI_MODEL` | no | `gpt-4o-mini` | Model name |
+| `NEWSAPI_KEY` | no | *(empty)* | NewsAPI key — enables LIVE data (technology top-headlines) |
+| `GNEWS_API_KEY` | no | *(empty)* | Optional additional live source (GNews) |
 
-Secrets live only in `.env` (never hardcoded, never committed). Swytchcode demo mode needs no credentials.
+Secrets live only in `.env` (never hardcoded, never committed, never sent to the frontend or logs). Swytchcode explain mode needs no credentials.
 
 ## Demo Flow (judge script)
 

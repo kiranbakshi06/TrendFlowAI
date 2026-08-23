@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.models.schemas import AutomationUpdate, GenerateRequest, PublishRequest, RetrieveRequest
 from backend.rag.retriever import get_retriever
-from backend.services import state
+from backend.services import news, state
 from backend.services.llm import generate_post, grounding_report, llm_mode
 from backend.services.pipeline import publish_post, run_pipeline, scheduler_loop
 from backend.swytchcode import client as swy
@@ -67,11 +67,14 @@ def health():
 @app.get("/api/config")
 def config():
     # Deliberately minimal: never expose API keys, CLI paths, or internal details.
+    ns = news.ensure_fresh()
     return {
         "llm_mode": llm_mode(),
         "swytchcode_available": swy.cli_available(),
         "swytchcode_allowlist": describe_allowlist(),
-        "dataset_notice": get_retriever().dataset_notice,
+        "news_mode": ns["news_mode"],
+        "news_providers": ns["providers"],
+        "dataset_notice": ns["notice"],
     }
 
 
@@ -91,14 +94,17 @@ def stats():
 
 @app.get("/api/trends")
 def trends():
+    ns = news.ensure_fresh()
     retriever = get_retriever()
-    return {"trends": retriever.derive_trends(), "dataset_notice": retriever.dataset_notice}
+    return {"trends": retriever.derive_trends(), "dataset_notice": ns["notice"],
+            "news_mode": ns["news_mode"], "news_providers": ns["providers"]}
 
 
 @app.post("/api/retrieve")
 def retrieve(req: RetrieveRequest):
     if not TREND_ID_RE.match(req.trend_id):
         raise HTTPException(400, "Invalid trend id")
+    ns = news.ensure_fresh()
     retriever = get_retriever()
     trend = next((t for t in retriever.derive_trends() if t["id"] == req.trend_id), None)
     if not trend:
@@ -107,10 +113,11 @@ def retrieve(req: RetrieveRequest):
     return {
         "trend": trend,
         "sources": [
-            {k: s[k] for k in ("id", "title", "source_name", "published_at", "tags", "excerpt", "score", "relevance_pct")}
+            {k: s[k] for k in ("id", "title", "source_name", "published_at", "tags", "excerpt", "score", "relevance_pct", "url", "origin") if k in s}
             for s in sources
         ],
-        "dataset_notice": retriever.dataset_notice,
+        "dataset_notice": ns["notice"],
+        "news_mode": ns["news_mode"],
     }
 
 

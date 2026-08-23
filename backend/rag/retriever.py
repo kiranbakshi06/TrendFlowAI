@@ -32,10 +32,32 @@ class Retriever:
     def _load(self):
         raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
         self.dataset_notice = raw.get("_notice", "")
-        self.documents = raw["documents"]
-        for doc in self.documents:
+        self.demo_documents = []
+        for doc in raw["documents"]:
             doc["text"] = f"{doc['title']} {doc['content']} {' '.join(doc['tags'])}"
             doc["excerpt"] = doc["content"].split(". ")[0] + "."
+            doc.setdefault("origin", "demo")
+            doc.setdefault("url", "")
+            self.demo_documents.append(dict(doc))
+        self.documents = list(self.demo_documents)
+
+    def load_live(self, live_docs: list[dict]):
+        """Merge live API articles with the fallback dataset and rebuild atomically."""
+        merged = []
+        for doc in live_docs:
+            doc = dict(doc)
+            doc["text"] = f"{doc['title']} {doc['content']} {' '.join(doc.get('tags', []))}"
+            doc["excerpt"] = doc["content"].split(". ")[0] + "."
+            doc.setdefault("origin", "live")
+            merged.append(doc)
+        for doc in self.demo_documents:
+            merged.append(dict(doc))
+        self.documents = merged
+        self._build_index()
+
+    def reset_to_demo(self):
+        self.documents = [dict(d) for d in self.demo_documents]
+        self._build_index()
 
     def _build_index(self):
         n_docs = len(self.documents)
@@ -79,7 +101,8 @@ class Retriever:
             q_tokens = set(tokenize(query))
             tag_hits = sum(1 for tag in doc["tags"] if any(t in tag or tag in t for t in q_tokens))
             score += 0.05 * tag_hits
-            scored.append({"score": round(score, 4), **{k: doc[k] for k in ("id", "title", "source_name", "excerpt", "content", "tags", "published_at") if k in doc}})
+            scored.append({"score": round(score, 4),
+                           **{k: doc[k] for k in ("id", "title", "source_name", "excerpt", "content", "tags", "published_at", "url", "origin") if k in doc}})
         scored.sort(key=lambda x: x["score"], reverse=True)
         results = [s for s in scored if s["score"] > 0][:top_k]
         # normalize relevance to 0-100

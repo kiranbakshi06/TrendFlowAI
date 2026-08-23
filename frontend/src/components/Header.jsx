@@ -21,7 +21,17 @@ export default function Header({ config }) {
             </span>
           </>
         )}
-        <span className="badge border-slate-700 bg-slate-800/60 text-slate-400">demo source data</span>
+        <span
+          className={`badge ${config?.news_mode === 'live' ? 'border-emerald-700/60 bg-emerald-900/30 text-emerald-300' : 'border-amber-700/60 bg-amber-900/30 text-amber-300'}`}
+          title={config?.dataset_notice || ''}
+        >
+          {config?.news_mode === 'live'
+            ? `LIVE API DATA${config.news_providers?.length ? ` (${config.news_providers.join(' + ')})` : ''}`
+            : 'DEMO SOURCE DATA'}
+        </span>
+        {config?.news_mode === 'demo' && config.dataset_notice?.startsWith('LIVE API unavailable') && (
+          <span className="badge border-slate-700 bg-slate-800/60 text-slate-400">fallback active</span>
+        )}
       </div>
     </header>
   )

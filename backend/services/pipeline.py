@@ -25,6 +25,9 @@ def run_pipeline(trend_id: str, publish: bool = False) -> dict:
     """Full flow: retrieve -> generate -> (optional) publish -> log."""
     if not re.fullmatch(r"[a-z0-9\-]{1,40}", trend_id or ""):
         raise ValueError("Invalid trend id")
+    from backend.services import news  # local import avoids circulars
+
+    news.ensure_fresh()  # refresh live articles into RAG when available
     retriever = get_retriever()
     trend = next((t for t in retriever.derive_trends() if t["id"] == trend_id), None)
     if not trend:
