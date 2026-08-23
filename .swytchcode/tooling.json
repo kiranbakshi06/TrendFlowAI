@@ -1,7 +1,75 @@
 {
   "editor": "none",
-  "integrations": {},
+  "integrations": {
+    "Ahrefs.ahrefs": {
+      "version": "3.2.0"
+    }
+  },
   "mode": "sandbox",
-  "tools": {},
+  "tools": {
+    "ahrefs.social-media.post.create": {
+      "desc": "\u003eRequests to this endpoint are free and do not consume any API units.",
+      "inputs": [
+        {
+          "output": {
+            "LOCATION": "query",
+            "REQUIRED": false,
+            "TYPE": "STRING"
+          }
+        },
+        {
+          "body": {
+            "LOCATION": "body",
+            "REQUIRED": false,
+            "TYPE": "OBJECT",
+            "schema": {
+              "properties": {
+                "auto_comment": {
+                  "required": false,
+                  "type": "string"
+                },
+                "channel_ids": {
+                  "required": true,
+                  "type": "[]STRING"
+                },
+                "scheduled_at": {
+                  "required": false,
+                  "type": "TIMESTAMP"
+                },
+                "text_content": {
+                  "required": true,
+                  "type": "string"
+                },
+                "timing": {
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "channel_ids",
+                "text_content",
+                "timing"
+              ]
+            }
+          }
+        }
+      ],
+      "integration": "Ahrefs.ahrefs@3.2.0",
+      "method_hash": "2c79a657271a711137eaa8c3262fcc317503a2b42352562872efcb5643a41f70",
+      "output": {
+        "schema": {
+          "properties": {
+            "post": {
+              "required": false,
+              "type": "object"
+            }
+          }
+        },
+        "status": 200
+      },
+      "summary": "Create post",
+      "type": "method"
+    }
+  },
   "version": "2.20.15"
 }

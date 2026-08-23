@@ -28,7 +28,8 @@ TrendFlowAI/
 │   │   ├── pipeline.py          # orchestration + 19:00 asyncio scheduler
 │   │   └── state.py             # JSON-backed state, counters, logs
 │   ├── swytchcode/
-│   │   └── client.py            # genuine wrapper around `swytchcode exec`
+│   │   ├── client.py            # hardened wrapper around `swytchcode exec`
+│   │   └── policy.py            # strict allowlist of actions × run modes
 │   ├── data/
 │   │   └── sources.json         # DEMO source dataset (10 curated AI news items)
 │   └── models/
@@ -60,15 +61,16 @@ If `OPENAI_API_KEY` is not set, generation falls back to a deterministic extract
 
 ## Swytchcode Role
 
-Publishing runs through the genuine Swytchcode kernel:
+Publishing is a **two-step, side-effect-free** flow:
 
-```bash
-swytchcode exec stripe.create_payment --demo --json --body request.json
-```
+1. **Preflight (genuine Swytchcode kernel):**
+   `swytchcode exec ahrefs.social-media.post.create --explain --json --body <file>`
+   The real CLI + kernel validate that the target integration/action exists and would accept the payload. Explain mode performs **no network call and needs no credentials**, so the demonstration is safe.
+2. **Publish (clearly labeled simulation):** a mock publisher records a simulated post (`sim_…` id, `linkedin-sandbox` platform). **No real social post is created and no external service is called** — we do not pretend otherwise. A real social publishing integration (e.g., Ahrefs live mode) requires provider credentials; flipping it on only requires extending the allowlist in `backend/swytchcode/policy.py`.
 
-- The wrapper locates the CLI on PATH (`swytchcode` or `swy`), writes the body to a temp file (the post text is passed in `description`), and parses the structured stdout JSON.
-- `--demo` mode requires no API keys and has **no real-world side effects**.
-- **Honest labeling:** every result is marked **"Sandbox execution"** — no real social post or live payment is created. A real social integration would require provider auth (out of scope for this trial); Swytchcode's sandbox demonstrates the identical execution path: canonical ID → kernel → normalized result → audit trail.
+### Execution policy (security)
+
+`backend/swytchcode/policy.py` enforces a strict allowlist: only explicitly configured canonical IDs × modes may execute. Commands are built as argv lists (never shell strings), user input never touches the command line, request bodies are written server-side via `json.dump` to random temp files, and internal details (stdout/stderr/CLI path) are stripped from all API responses.
 
 ## How to Run
 
@@ -104,12 +106,12 @@ Secrets live only in `.env` (never hardcoded, never committed). Swytchcode demo 
 2. **Current Trends** — pick a trend (e.g., *Frontier LLM releases*).
 3. **RAG Sources** — top-ranked sources appear with title, outlet, excerpt, relevance %.
 4. Click **Generate Today's Content** → grounded post with `[1] [2]` citations, grounding indicator, sources-used list.
-5. Click **Publish via Swytchcode** → panel shows *execution requested*, status, `stripe.create_payment`, sandbox label, returned payment result, timestamp, duration. Honest banner: sandbox only.
-6. **Execution Logs** table records the run; counters update (Posts Generated, Swytchcode Executions).
+5. Click **Publish via Swytchcode** → panel shows (1) real Swytchcode preflight validation of `ahrefs.social-media.post.create` (explain mode, exit code, duration, timestamp) and (2) the clearly-labeled **SIMULATED** publish result with post id. Honest banner states no real post was created.
+6. **Execution Logs** table records preflight + publish runs; counters update (Posts Generated, Swytchcode Executions).
 7. **Automation** — toggle *Daily at 7:00 PM*: backend scheduler runs the full pipeline (retrieve → generate → sandbox publish) once per day at/after 19:00 local time and logs it.
 
 ## Known Limitations
 
 - Source data is a local demo dataset (labeled everywhere); a live news API can be added via env key later.
-- Publishing is a Swytchcode **sandbox/demo** operation by design — no real posts or payments.
+- Publishing is **preflight validation (real Swytchcode kernel, explain mode) + clearly-labeled simulation** — no real posts are created and no external service is called.
 - Scheduler is in-process (resets if backend restarts); automation toggle state persists in `data/state.json`.

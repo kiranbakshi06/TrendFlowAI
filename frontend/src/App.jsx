@@ -163,7 +163,7 @@ export default function App() {
         </div>
 
         <footer className="mt-8 pb-4 text-center text-xs text-slate-600">
-          TrendFlow AI · RAG pipeline + Swytchcode execution · Publishing uses the Swytchcode sandbox (no real posts/payments)
+          TrendFlow AI · RAG pipeline + Swytchcode preflight · Publishing is clearly-labeled simulation (no real posts)
         </footer>
       </div>
     </div>
